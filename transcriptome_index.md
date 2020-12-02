@@ -1,17 +1,5 @@
 # Transcriptome Index
 
-## Utils
-
-### `prepare_job`
-
-This function creates all the prerequisites for the transcriptome index pipeline to be run.
-
-These prerequisites include:
-
-- ProcessorJob
-- Sample
-- OriginalFiles
-
 ## Tests
 
 ### `test_assembly_information`
@@ -32,10 +20,16 @@ Tests that the index files are built
 test steps:
 - removes the work directories
 - prepares the first job with a length of `short`
+    - creates ProcessorJob
+    - creates Sample
+    - creates OriginalFiles and sets the filepaths to point to the file with the correct length
 - runs first job
 - asserts job is successful
 - asserts length is properly set in the job
 - prepares the second job with a length of `long`
+    - creates ProcessorJob
+    - creates Sample
+    - creates OriginalFiles and sets the filepaths to point to the file with the correct length
 - runs second job
 - asserts job is successful
 - asserts length is properly set in the job

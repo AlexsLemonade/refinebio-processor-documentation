@@ -1,69 +1,5 @@
 # Salmon
 
-## Utils
-
-These functions are used by the tests. Most utils are common code for setting up tests or asserting after the test is run.
-
-### `prepare_organism_indices`
-
-This function creates a base organism index and all of its relations which will be used by salmon in the job pipeline.
-
-### `prepare_job`
-
-This function creates all the prerequisites for the transcriptome index pipeline to be run.
-
-These prerequisites include:
-
-- ProcessorJob
-- Sample
-- OriginalFiles
-
-### `prepare_dotsra_job`
-
-This function is the same as prepare_job, but the Original File is sra.
-
-### `identical_checksum`
-
-Checks if two files have identical checksums.
-
-### `strong_quant_correlation`
-
-Checks if the two inputed quant files are strongly correlated.
-
-They are strongly correlated if both columns #3 and #4 (zero-indexed) of the two files have a correlation >= 0.99.
-
-### `check_salmon_quant`
-
-Runs a majority of the salmon pipeline.
-
-Asserts that the quant output file exists.
-
-Asserts that the quant output file strongly correlates to the reference file.
-
-### `create_tximport_job_context`
-
-Creates a `job_context` dict that could be passed into the salmon pipeline and have all steps related to tximport run successfully.
-
-Creates a sample for each accession contained the input lists `complete_accessions` and `incomplete_accessions`.
-The samples in `complete_accessions` will be simlulated as already having salmon quant run on them.
-The samples in `incomplete_accessions` won't.
-All samples are added to the same experiment.
-
-### `run_tximport_for_job_context`
-
-Runs tximport related salmon pipeline steps for the given job context.
-
-The steps that are run are:
-- `_find_or_download_index`
-- `get_tximport_inputs`
-- `tximport`
-- `end_job`
-
-### `run_tximport_at_progress_point`
-
-Creates a `job_context` by passing the accession code lists into `create_tximport_job_context`
-and then calls `run_tximport_for_job_context` with that `job_context`
-
 ## Overall Tests
 
 ### `test_salmon`
@@ -71,7 +7,12 @@ and then calls `run_tximport_for_job_context` with that `job_context`
 Tests the entire salmon pipeline
 
 test steps:
--  calls `prepare_job`
+- calls `prepare_job`
+    - creates all prerequisites for the salmon pipeline to be run including:
+        - ProcessorJob
+        - Sample
+        - OriginalFiles
+        - OrganismIndex
 - passes the created base job to `salmon.salmon()` which runs the entire pipeline
 - asserts that the `job.success` is true
 - asserts that the `sample.is_processed` is false
@@ -83,6 +24,11 @@ Confirms that salmon won't be run on GEO data
 
 test steps:
 - calls `prepere_job`
+    - creates all prerequisites for the salmon pipeline to be run including:
+        - ProcessorJob
+        - Sample
+        - OriginalFiles
+        - OrganismIndex
 - creates copies for all original files since they will be cleaned up when the job fails
 - edits the sample created in `prepare_job` to have a `source_database` of GEO
 - calls `salmon.salmon()` on the base job to run the entire pipeline
@@ -97,7 +43,13 @@ test steps:
 Tests the entire pipeline with a sra file
 
 test steps:
--  calls `prepare_dotsra_job`
+- calls `prepare_dotsra_job`
+    - creates all prerequisites for the salmon pipeline to be run including:
+        - ProcessorJob
+        - Sample
+        - OriginalFiles
+        - OrganismIndex
+    - uses an RSA file when creating the OriginalFile
 - passes the created base job to `salmon.salmon()` which runs the entire pipeline
 - asserts that the `job.success` is true
 
@@ -107,8 +59,14 @@ Confirms that the job fails with an SRA file that doesn't exist
 
 test steps:
 - calls `prepare_dotsra_job` with a file that doesn't exist
+    - creates all prerequisites for the salmon pipeline to be run including:
+        - ProcessorJob
+        - Sample
+        - OriginalFiles
+        - OrganismIndex
+    - uses an RSA file when creating the OriginalFile
 - passes the created base job to `salmon.salmon()` which runs the entire pipeline
-- asserts that job context was created
+- asserts that `job_context` was created
 - asserts that the `job.success` is false
 
 ### `test_salmon_quant_one_sample_double_reads`
@@ -117,14 +75,16 @@ Tests salmon quant on a single sample with two original files (double reads)
 
 test steps:
 - calls `prepare_organism_indices`
+    - creates a dummy OrganismIndex that can be used in the salmon pipeline
 - creates the test sample and experiment
 - adds an additional fake sample to the experiment to prevent tximport from running on the experiment
     - tximport will only run after salmon quant is run on every sample associated with the experiment
 - creates two original files and adds them to the test sample
 - calls `salmon._prepare_files` to prepare the original files before running salmon quant
-- calls `check_salmon_quant`
+- calls `check_salmon_quant` to run salmon quant and tximport
     - asserts quant output file is made
     - asserts quant output file strongly correlates to reference file
+    - the files are strongly correlated if both columns #3 and #4 (zero-indexed) of the two files have a spearman correlation >= 0.99.
 - asserts that the test experiment is not ready for tximport yet
 
 ### `test_salmon_quant_two_samples_single_read`
@@ -133,20 +93,23 @@ Tests salmon quant on two samples each with one original file (single read) that
 
 test steps:
 - calls `prepare_organism_indices`
+    - creates a dummy OrganismIndex that can be used in the salmon pipeline
 - creates the test experiment
 - creates sample1 and og_file_1, associates the two, and adds the sample to the experiemnt
 - creates sample2 and og_file_2, associates the two, and adds the sample to the experiemnt
 - calls `salmon._prepare_files()`, passing in  og_file_1
-- calls `check_salmon_quant`
+- calls `check_salmon_quant` to run salmon quant and tximport
     - asserts quant output file is made
     - asserts quant output file strongly correlates to reference file
+    - the files are strongly correlated if both columns #3 and #4 (zero-indexed) of the two files have a spearman correlation >= 0.99.
 - asserts that the experiment is not ready for tximport yet - salmon qunat still needs to be run on sample2
 - asserts that there are no tximport outputs yet
 - calls `salmon._prepare_files()`, passing in  og_file_2
 - cleans up tximport data from previous runs if it exists
-- calls `check_salmon_quant`
+- calls `check_salmon_quant` to run salmon quant and tximport
     - asserts quant output file is made
     - asserts quant output file strongly correlates to reference file
+    - the files are strongly correlated if both columns #3 and #4 (zero-indexed) of the two files have a spearman correlation >= 0.99.
     - at this point tximport should be run
 - asserts that the rds file (tximport output file) has been made
 - runs test_tximport.R to verify the output file
@@ -178,7 +141,7 @@ test steps:
 - runs SalmonTools
 - asserts `job.success` is true
 - unpacks the output file
-- asserts that both output files match checksums with the expected output files
+- asserts that both output files' checksums match with the expected output files'
 
 ### `test_single_read`
 
@@ -200,11 +163,16 @@ Tests that the correct index length is calculated when a sample has one Original
 
 test steps:
 - calls `prepare_job`
+    - creates all prerequisites for the salmon pipeline to be run including:
+        - ProcessorJob
+        - Sample
+        - OriginalFiles
+        - OrganismIndex
 - creates a dummy `job_context` with one OriginalFile
 - calls `salmon._prepare_files` to prepare the OriginalFile before determining the index length
 - calls `salmon._determine_index_length`
 - asserts that the raw index length is correctly set
-- asserts that the indexl length is correctly set
+- asserts that the index length is correctly set
 
 ### `test_salmon_determine_index_length_double_read`
 
@@ -212,11 +180,16 @@ Tests that the correct index length is calculated when a sample has two Original
 
 test steps:
 - calls `prepare_job`
+    - creates all prerequisites for the salmon pipeline to be run including:
+        - ProcessorJob
+        - Sample
+        - OriginalFiles
+        - OrganismIndex
 - creates a dummy `job_context` with both OriginalFiles
 - calls `salmon._prepare_files` to prepare the OriginalFiles before determining the index length
 - calls `salmon._determine_index_length`
 - asserts that the raw index length is correctly set
-- asserts that the indexl length is correctly set
+- asserts that the index length is correctly set
 
 ## RuntimeProcessor Tests
 
@@ -276,10 +249,9 @@ test steps:
 Tests that trying to run SalmonTools with a bad processor is handled correctly
 
 test steps:
-- test setup
-    - creates test directory
-    - creates dummy `job_context`
-    - creates dummy Sample
+- creates test directory
+- creates dummy `job_context`
+- creates dummy Sample
 - sets the yml file to one that doesn't exist
 - tries to run SalmonTools
 - asserts that the job's success is false
@@ -297,13 +269,17 @@ test steps:
     - incomplete samples has 5 accession codes
     - complete samples has 20 accessioncodes
     - By having 20/25 samples complete, we're just past both the numerical and percent cutoffs for running tximport early
-- calls `run_tximport_at_progress_point` to build the `job_context`, create the experiment with samples, and run tximport
+- calls `run_tximport_at_progress_point`
+    - creates a dummy `job_context` that could be passed into the salmon pipeline and have all steps related to tximport run successfully.
+    - creates a test experiment
+    - creates test samples and their associations for incomplete and complete samples and adds them to the test experiment
+    - runs tximport
 - asserts that 'tximported' is in the final `job_context`
 - for each sample in the completed samples list:
-    - check that the associations were made properly in `create_tximport_job_context`
+    - check that the database associations were made properly 
     - check that the tpm and rds files were created for the sample
     - check that the sample was processed
-- for each sample in the incoplete sample list:
+- for each sample in the incomplete sample list:
     - assert that it was ignored in the pipeline by verifying that the sample has no computed files
 
 ### `test_version_filter`
@@ -312,8 +288,11 @@ Tests that we don't run tximport on old salmon versions
 
 test steps:
 - creates lists of accession codes for incomplete and complete samples
-- calls `run_tximport_at_progress_point` to build the `job_context`, create the experiment with samples, and run tximport
-    - passes in salmon version 0.9.1
+- calls `run_tximport_at_progress_point` and passes in salmon version 0.9.1
+    - creates a dummy `job_context` that could be passed into the salmon pipeline and have all steps related to tximport run successfully.
+    - creates a test experiment
+    - creates test samples and their associations for incomplete and complete samples and adds them to the test experiment
+    - runs tximport
 - asserts that 'tximported' is not in the final `job_context`
     - 'tximported' should not get added because the salmon version is out of date
 
@@ -326,10 +305,14 @@ test steps:
     - incomplete samples has 6 accession codes
     - complete samples has 20 accessioncodes
     - By having 20/26 samples complete, we're past the numerical, but not the percent cutoff for running tximport early
-- calls `run_tximport_at_progress_point` to build the `job_context`, create the experiment with samples, and run tximport
+- calls `run_tximport_at_progress_point`
+    - creates a dummy `job_context` that could be passed into the salmon pipeline and have all steps related to tximport run successfully.
+    - creates a test experiment
+    - creates test samples and their associations for incomplete and complete samples and adds them to the test experiment
+    - runs tximport
 - asserts that 'tximported' is not in the final `job_context`
     - since we're not passed the percent cutoff, we shouldn't run tximport
-- for each sample in the incoplete sample list:
+- for each sample in the incomplete sample list:
     - assert that it was ignored in the pipeline by verifying that the sample has no computed files
 
 ### `test_tximport_numerical_cutoff`
@@ -339,10 +322,14 @@ test steps:
     - incomplete samples has 5 accession codes
     - complete samples has 19 accessioncodes
     - By having 19/24 samples complete, we're past the percent, but not the numerical cutoff for running tximport early
-- calls `run_tximport_at_progress_point` to build the `job_context`, create the experiment with samples, and run tximport
+- calls `run_tximport_at_progress_point`
+    - creates a dummy `job_context` that could be passed into the salmon pipeline and have all steps related to tximport run successfully.
+    - creates a test experiment
+    - creates test samples and their associations for incomplete and complete samples and adds them to the test experiment
+    - runs tximport
 - asserts that 'tximported' is not in the final `job_context`
     - since we're not passed the percent cutoff, we shouldn't run tximport
-- for each sample in the incoplete sample list:
+- for each sample in the incomplete sample list:
     - assert that it was ignored in the pipeline by verifying that the sample has no computed files
 
 ### `test_missing_computed_file`
@@ -353,11 +340,14 @@ test steps:
 - creates lists of accession codes for incomplete and complete samples
     - incomplete samples has 5 accession codes
     - complete samples has 20 accessioncodes
-- calls `create_tximport_job_context` to build the `job_context` and create the experiment with samples
+- calls `create_tximport_job_context`
+    - creates a dummy `job_context` that could be passed into the salmon pipeline and have all steps related to tximport run successfully.
+    - creates a test experiment
+    - creates test samples and their associations for incomplete and complete samples and adds them to the test experiment
 - gets one of the complete samples and sets its computed file's s3 related fields to None 
 - calls `run_tximport_for_job_context` to run tximport
 - asserts that 'tximported' is not in the final `job_context`
     - since one of the complete samples "has computed files that were not uploaded to s3" it got filtered out
     - we now have 19/24 samples complete so we miss the numerical cutoff for running tximport early
-- for each sample in the incoplete sample list:
+- for each sample in the incomplete sample list:
     - assert that it was ignored in the pipeline by verifying that the sample has no computed files
