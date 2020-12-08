@@ -23,7 +23,7 @@ test steps:
 Confirms that salmon won't be run on GEO data
 
 test steps:
-- calls `prepere_job`
+- calls `prepare_job`
     - creates all prerequisites for the salmon pipeline to be run including:
         - ProcessorJob
         - Sample
@@ -49,7 +49,7 @@ test steps:
         - Sample
         - OriginalFiles
         - OrganismIndex
-    - uses an RSA file when creating the OriginalFile
+    - uses an SRA file when creating the OriginalFile
 - passes the created base job to `salmon.salmon()` which runs the entire pipeline
 - asserts that the `job.success` is true
 
@@ -64,14 +64,14 @@ test steps:
         - Sample
         - OriginalFiles
         - OrganismIndex
-    - uses an RSA file when creating the OriginalFile
+    - uses an SRA file when creating the OriginalFile
 - passes the created base job to `salmon.salmon()` which runs the entire pipeline
 - asserts that `job_context` was created
 - asserts that the `job.success` is false
 
 ### `test_salmon_quant_one_sample_double_reads`
 
-Tests salmon quant on a single sample with two original files (double reads)
+Tests salmon quant on a single sample with two original files (paired end)
 
 test steps:
 - calls `prepare_organism_indices`
@@ -84,7 +84,7 @@ test steps:
 - calls `check_salmon_quant` to run salmon quant and tximport
     - asserts quant output file is made
     - asserts quant output file strongly correlates to reference file
-    - the files are strongly correlated if both columns #3 and #4 (zero-indexed) of the two files have a spearman correlation >= 0.99.
+    - the files are strongly correlated if both columns #3 and #4 (zero-indexed; TPM and NumReads) of the two files have a spearman correlation >= 0.99.
 - asserts that the test experiment is not ready for tximport yet
 
 ### `test_salmon_quant_two_samples_single_read`
@@ -97,28 +97,28 @@ test steps:
 - creates the test experiment
 - creates sample1 and og_file_1, associates the two, and adds the sample to the experiemnt
 - creates sample2 and og_file_2, associates the two, and adds the sample to the experiemnt
-- calls `salmon._prepare_files()`, passing in  og_file_1
+- calls `salmon._prepare_files()`, passing in og_file_1
 - calls `check_salmon_quant` to run salmon quant and tximport
     - asserts quant output file is made
     - asserts quant output file strongly correlates to reference file
-    - the files are strongly correlated if both columns #3 and #4 (zero-indexed) of the two files have a spearman correlation >= 0.99.
-- asserts that the experiment is not ready for tximport yet - salmon qunat still needs to be run on sample2
+    - the files are strongly correlated if both columns #3 and #4 (zero-indexed; TPM and NumReads) of the two files have a spearman correlation >= 0.99.
+- asserts that the experiment is not ready for tximport yet - salmon quant still needs to be run on sample2
 - asserts that there are no tximport outputs yet
-- calls `salmon._prepare_files()`, passing in  og_file_2
+- calls `salmon._prepare_files()`, passing in og_file_2
 - cleans up tximport data from previous runs if it exists
 - calls `check_salmon_quant` to run salmon quant and tximport
     - asserts quant output file is made
     - asserts quant output file strongly correlates to reference file
-    - the files are strongly correlated if both columns #3 and #4 (zero-indexed) of the two files have a spearman correlation >= 0.99.
+    - the files are strongly correlated if both columns #3 and #4 (zero-indexed; TPM and NumReads) of the two files have a spearman correlation >= 0.99.
     - at this point tximport should be run
 - asserts that the rds file (tximport output file) has been made
 - runs test_tximport.R to verify the output file
 - assert that two output files were created
-- assert that the two outut files exist
+- assert that the two output files exist
 
 ### `test_get_tximport_inputs`
 
-Tests that tximport only considers RNA-Seq samples from GEO
+Tests that tximport only considers RNA-Seq samples from SRA and ignores samples form GEO
 
 test steps:
 - creates a test experiment
@@ -133,7 +133,7 @@ test steps:
 
 ### `test_double_reads`
 
-Tests SalmonTools on a sample with two OriginalFiles (double reads)
+Tests SalmonTools on a sample with two OriginalFiles (paired end)
 
 test steps:
 - creates dummy `job_context` with both `input_file_path` and `input_file_path_2`
@@ -176,7 +176,7 @@ test steps:
 
 ### `test_salmon_determine_index_length_double_read`
 
-Tests that the correct index length is calculated when a sample has two OriginalFiles (double read)
+Tests that the correct index length is calculated when a sample has two OriginalFiles (paired end)
 
 test steps:
 - calls `prepare_job`
@@ -277,7 +277,7 @@ test steps:
 - asserts that 'tximported' is in the final `job_context`
 - for each sample in the completed samples list:
     - check that the database associations were made properly 
-    - check that the tpm and rds files were created for the sample
+    - check that the tsv and rds files were created for the sample
     - check that the sample was processed
 - for each sample in the incomplete sample list:
     - assert that it was ignored in the pipeline by verifying that the sample has no computed files
