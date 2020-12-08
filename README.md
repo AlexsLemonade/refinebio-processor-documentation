@@ -3,6 +3,10 @@ For tracking documentation of the methodology behind our processor tests: https:
 
 ## Test Documentation Links
 
-### [no op](./no_op.md)
+### [Salmon](./salmon.md)
+
+### [Transcriptome Index](./transcriptome_index.md)
+
+### [NO OP](./no_op.md)
 
 ### [QN Reference](./qn_reference.md)
