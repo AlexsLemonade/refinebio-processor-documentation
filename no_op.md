@@ -76,3 +76,14 @@ test steps:
 
 ## Future Tests
 
+The No Op pipeline is composed of `_prepare_files`, `_convert_genes`, and `_create_result`.
+
+`_prepare_files` has a lot of logic in it and should probably be individually tested.
+We could test that the `work_dir` is properly created, that `input_file_path` and `output_file_path` are created properly,
+and that all the logic related to the header works correctly.
+
+`_convert_genes` also has a lot of logic both for `affy` and `illumina` genes.
+Both routes should probably be individually tested.
+
+`_create_result` could also be pretty easily tested.
+We could test that the ComputationalResult and the ComputedFile are properly created and that they get associated properly to the Samples.
