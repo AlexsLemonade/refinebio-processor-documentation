@@ -13,11 +13,11 @@ test steps:
     - creates ProcessorJob
     - creates test Organism
     - creates test experiment
-    - creates 200 test Samples and ComputedFiles using the test test Organism and adds them to the test experiment
+    - creates 200 test Samples and ComputedFiles using the test Organism and adds them to the test experiment
     - creates test Dataset with the test experiment and samples 1-6
     - adds the test Dataset to the ProcessorJob
 - runs QN Reference
-- asserts the job was successfull
+- asserts the job was successful
 - asserts the created `target_file` exists
 - asserts the `target_file` is the correct size
 - gets the `computed_file` from the test Organism
@@ -41,7 +41,7 @@ test steps:
 - creates prerequisites
     - creates test Organism
     - creates test experiment
-    - creates 6 test Samples and ComputedFiles using the test test Organism and adds them to the test experiment
+    - creates 6 test Samples and ComputedFiles using the test Organism and adds them to the test experiment
     - creates test Dataset with the test experiment and samples 1-6
     - adds the test Dataset to the ProcessorJob
 - calls `create_qn_target` expecting it to fail
