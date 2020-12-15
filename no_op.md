@@ -87,3 +87,6 @@ Both routes should probably be individually tested.
 
 `_create_result` could also be pretty easily tested.
 We could test that the ComputationalResult and the ComputedFile are properly created and that they get associated properly to the Samples.
+
+More generally, submitter-processed data can be all over the place, so it would probably be a good idea to get more input files that are weird
+and test that they are handled correctly.

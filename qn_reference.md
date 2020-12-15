@@ -55,6 +55,7 @@ The QN Reference pipeline is compused of `_prepare_input`, `_build_qn_target`, `
 I think that tests should be created for `_build_qn_target` and potentially for `_create_result_objects`.
 
 For `_build_qn_target` we could test that `sum_frame`, `num_valid_inputs`, and `geneset` are created correctly.
+Additionally, `_build_qn_target` filters out samples that have null or NA genes. We could verify that this is handled correctly. 
 
 For `_create_result_objects` we could test that the ComputationalResult, ComputedFile, and the Annotation are created correctly.
 
