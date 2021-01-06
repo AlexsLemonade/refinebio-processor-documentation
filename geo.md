@@ -39,12 +39,12 @@ test steps:
 
 ### `test_good_detection`
 
-Tests that the detector properly handles a mislabled Sample.
+Tests that the detector properly handles a mislabeled Sample.
 
 test steps:
 - creates test ProcessorJob
 - creates test OriginalFile and associates it to the test job
-    - the OriginalFile is `GSE54661_non_normalized.txt` which is mislabled as `illuminaHumanv4` on GEO
+    - the OriginalFile is `GSE54661_non_normalized.txt` which is mislabeled as `illuminaHumanv4` on GEO
 - creates test Organism
 - creates test Samples
 - associates the test Samples to the test OriginalFile
@@ -53,7 +53,7 @@ test steps:
 - asserts that the platform was set to `illuminaHumanv3`
 - for every test Sample
     - gets the keys from the Sample's associated Sample annotation set
-    - asserts that the keys are one of the following accaptable keys: "detected_platform", "detection_percentage", or "mapped_percentage"
+    - asserts that the keys are one of the following acceptable keys: "detected_platform", "detection_percentage", or "mapped_percentage"
 - does final cleanup by deleting the work directory
 
 ## Agilent Two Color Tests

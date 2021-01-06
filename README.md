@@ -13,6 +13,6 @@ For tracking documentation of the methodology behind our processor tests: https:
 
 ### [Array Express](./array_express.md)
 
-### [Compenida](./compendia.md)
+### [Compendia](./compendia.md)
 
 ### [GEO](./geo.md)
