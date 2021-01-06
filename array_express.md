@@ -40,7 +40,7 @@ test steps:
 
 Tests entire array express pipeline for a huex v1 file.
 
-Since there's no CDL for huex v1 files, this is a special case that should be tested.
+Since there's no CDF for huex v1 files, this is a special case that should be tested.
 
 test steps:
 - prepares job with a huex v1 file
