@@ -32,4 +32,7 @@ test steps:
 
 ## Future Tests
 
+Create Quantpendia is actually a really straight forward processor.
+The one test that it has does a pretty good job testing all components of the pipeline.
 
+It might make sense to look into a non-happy-path test that we could add since the only test is happy-path.
