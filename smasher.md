@@ -146,7 +146,7 @@ Tests the case where two Samples are associated to the same ComputedFile.
 
 ** In this test there are additional places where test ComputationalResults are created.
 I think they don't actually need to be created -
-hey were kind of confusing to me and removing them or adding comments for their would make the test less confusing
+they were kind of confusing to me and removing them or adding comments for their would make the test less confusing
 
 test steps:
 - creates prerequisites
@@ -252,13 +252,13 @@ test steps:
     - runs the smasher pipeline
     - asserts that the output file exists
     - removes the output file
-    - asserts that the final output frame has 1 columns
+    - asserts that the final output frame has 1 column
 - aggregate by "ALL"
     - gets the test Dataset and sets `aggregate_by` to be "ALL"
     - resets the test ProcessorJob start and end times
     - runs the smasher pipeline
     - asserts that the output file exists
-    - asserts that the final output frame has 1 columns
+    - asserts that the final output frame has 2 columns
 
 ### `test_quant_sf_only_smash`
 
@@ -337,7 +337,7 @@ test steps:
 Tests the `create_compendia` call command.
 
 test steps:
-- rerouts stderr and stdout
+- reroutes stderr and stdout
 - asserts that the `create_compendia` call command raises an exception
 - resets stderr and stdout
 
@@ -346,7 +346,7 @@ test steps:
 Tests the `fetch_compendia` call command.
 
 test steps:
-- rerouts stderr and stdout
+- reroutes stderr and stdout
 - asserts that the `fetch_compendia` call command raises an exception
 - resets stderr and stdout
 
@@ -591,3 +591,5 @@ Some code is unnecessary I think - we should go through and make sure, then clea
 
 Additionally, most of the tests just verify that the outputs exist or verify that the job ran successfully.
 It might be a good idea to go through and figure out if we can do a better job of testing the outputs.
+
+Finally `test_qn_targets_only` is named incorrectly and should be renamed.
