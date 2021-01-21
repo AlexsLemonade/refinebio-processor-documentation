@@ -3,16 +3,21 @@ For tracking documentation of the methodology behind our processor tests: https:
 
 ## Test Documentation Links
 
-### [Salmon](./salmon.md)
+### [Array Express](./array_express.md)
 
-### [Transcriptome Index](./transcriptome_index.md)
+### [Compendia](./compendia.md)
+
+### [Create Quantpendia](./create_quantpendia.md)
+
+### [GEO](./geo.md)
 
 ### [NO OP](./no_op.md)
 
 ### [QN Reference](./qn_reference.md)
 
-### [Array Express](./array_express.md)
+### [Salmon](./salmon.md)
 
-### [Compendia](./compendia.md)
+### [Smasher](./smasher.md)
 
-### [GEO](./geo.md)
+### [Transcriptome Index](./transcriptome_index.md)
+
