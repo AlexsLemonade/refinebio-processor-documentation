@@ -54,4 +54,7 @@ Additional functions like `_handle_shell_error` and `get_organism_name_from_path
 
 We could also add a RuntimeProcessor Test similar to the ones in `test_salmon.py` to validate that the `TX_INDEX` processor is set up correctly.
 
-
+The end to end tests should be updated to include a check to make sure that a file processed with salmon using a freshly generated transcriptome index are similar enough to a pre-computed files.
+This would involve:
+- Creating a reference quant.sf output file and including it in the repo.
+- the files are strongly correlated if both columns #3 and #4 (zero-indexed; TPM and NumReads) of the two files have a spearman correlation >= 0.99.

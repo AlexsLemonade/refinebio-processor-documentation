@@ -64,4 +64,7 @@ It seems like it would be pretty easy to test `_create_ensg_pkg_map`, we just ha
 For `_determine_brainarray_package` we could test that `platform_accession_code` and `brainarray_package` are properly set in the job context.
 
 Also, right now we only check that the generated computed file exists and is named properly.
-We could improve the tests by checking that the generated computed file is generated properly by checking its correlation to a pre-computed file.
+We should improve the tests by checking that the generated computed file is generated properly by checking its correlation to a pre-computed file.
+This would involve:
+- Creating a reference PCL file and including it in the repo.
+- Checking that the gene expression column of the PCL file of both the generated and reference files had a Spearman correlation >= 0.99.
