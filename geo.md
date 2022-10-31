@@ -65,7 +65,7 @@ Tests the entire Agilent twocolor pipeline
 test steps:
 - prepares Agilent twocolor job
     - creates test ProcessorJob
-    - creates test OriginalFile 
+    - creates test OriginalFile
     - points the OriginalFile to an Agilent twocolor file
     - associates it to the test job
 - runs the Agilent twocolor pipeline
@@ -85,12 +85,17 @@ for `_detect_columns` we could test that `columnIds` are properly added to the j
 
 There are already tests that are meant to target `_detect_platform`, but it might be worth it to add some more targeted tests.
 
+We should improve the tests by checking that the generated computed files of both geo and illumina are generated properly by checking thier correlation to pre-computed files.
+This would involve:
+- Creating a reference file and including it in the repo.
+- Checking that the gene expression column of the file of both the generated and reference files had a Spearman correlation >= 0.99.
+
 When it comes to Agilent twocolor, it should be noted that as of right now we don't actually process any Agilent arrays in production
 because they are not in `config/supported_microarray_platforms.csv`.
 
 It might make sense to hold off on beefing up the Agilent twocolor tests until we support processing Agilent arrays in production.
 
 If we ever do decide to add tests for Agilent twocolor,
-the thing that stood out the most to me was the section in `_run_scan_twocolor` 
+the thing that stood out the most to me was the section in `_run_scan_twocolor`
 that refers to the expected bug that occurs in Biocunductor.
-It might be a good idea to look into this and see if that logic still stands. 
+It might be a good idea to look into this and see if that logic still stands.

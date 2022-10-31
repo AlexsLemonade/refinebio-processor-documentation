@@ -52,7 +52,7 @@ test steps:
         - creates test Sample and associates it to the test Experiment and ComputationalResult
         - creates test ComputedFile and associates it to the test Sample
     - creates Sample with non-existent ComputedFile
-        - creates test Sample 
+        - creates test Sample
         - associates test Sample to the RNA-Seq Experiment and ComputationalResult
         - does not create a ComputedFile for this Sample
     - creates dataset using the Microarray and RNA-Seq Experiments created in previous steps
@@ -74,4 +74,12 @@ or it might make more sense to just test `smashing_utils.process_frames_for_key`
 
 Secondly, and most importantly we should definitely test the massive function `_perform_imputation`.
 Right now our tests just verify that the pipeline ran successfully and that the `compendium_result` exists.
-We should try to figure out a way to actually verify that the `compendium_result` looks the way it should.
+We should make sure that the intermediate tests work as well:
+- We should test that imputation is done correctly:
+    - Remove some values from the matrix.
+    - Run imputation.
+    - Compare the actual and imputed values.
+- We filter both rows and columns during creation of compendia, we should test that the expected rows and columns are dropped from the matrices. These filters are explained in the comments of the `create_compendia.py` processor file, but repeated here for convenience:
+    - Drop all rows in rnaseq_expression_matrix with a row sum < 10th percentile of rnaseq_row_sums; this is now filtered_rnaseq_matrix
+    - Remove samples (columns) with >50% missing values in combined_matrix
+- We should also test that quantile normalization is skipped for quantpendia.

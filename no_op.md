@@ -90,3 +90,8 @@ We could test that the ComputationalResult and the ComputedFile are properly cre
 
 More generally, submitter-processed data can be all over the place, so it would probably be a good idea to get more input files that are weird
 and test that they are handled correctly.
+
+We should improve the tests by checking that the generated computed file is generated properly by checking its correlation to a pre-computed file
+This would involve:
+- Creating a reference file and including it in the repo.
+- Checking that the gene expression column of the file of both the generated and reference files had a Spearman correlation >= 0.99.
